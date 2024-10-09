@@ -49,6 +49,13 @@ class DBXMetrics(StageMetrics):
         return df_aggregated_metrics
 
     def persist(self, entrypoint: str, options: dict[str, str]) -> DataGateway:
+        """
+        Allowed options:
+            - unity_catalog:
+                - catalog
+            - temp
+                - path
+        """
         _stage_metrics = self._stage_metrics()
         _aggregate_metrics = self._aggregate_metrics()
          

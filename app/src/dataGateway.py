@@ -11,6 +11,13 @@ class DataGateway:
         self.agg_metrics = agg_metrics
 
     def option(self, entry: str, **kwargs):
+        """
+        Allowed options:
+            - unity_catalog:
+                - catalog
+            - temp
+                - path
+        """
         method = getattr(self, entry, None)
         if callable(method):
             return method(**kwargs)
