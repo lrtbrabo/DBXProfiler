@@ -5,6 +5,11 @@ from _spark_runtime import get_workspace, get_spark
 from dataGateway import DataGateway
 import uuid
 
+"""
+This cannot be ran from Spark Connect since Spark Context is not supported 
+from Spark Connect as it depends on the JVM
+"""
+
 class DBXMetrics(StageMetrics):
     def __init__(self, application_name: str, catalog: str):
         super().__init__(get_spark())
@@ -56,4 +61,5 @@ class DBXMetrics(StageMetrics):
                 .option("unity_catalog", **options)
         )
         return gtw
+
 
