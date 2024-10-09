@@ -25,10 +25,10 @@ class DataGateway:
 
 
 class UnityCatalog:
-    def __init__(self):
+    def __init__(self, **kargs):
         print("I'm saving this to unity!!!")
 
 
 class TempSave:
-    def __init__(self):
+    def __init__(self, **kargs):
         print("I'm saving this to temp!!!")
