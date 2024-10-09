@@ -11,12 +11,11 @@ from Spark Connect as it depends on the JVM
 """
 
 class DBXMetrics(StageMetrics):
-    def __init__(self, application_name: str, catalog: str):
+    def __init__(self, application_name: str):
         super().__init__(get_spark())
         self.w = get_workspace()
         self.application_name = application_name
         self.execution_id = str(uuid.uuid4())
-        self.catalog = catalog
 
     def start_metrics(self):
         self.begin()
@@ -49,16 +48,16 @@ class DBXMetrics(StageMetrics):
         df_aggregated_metrics = self._add_metadata(df_aggregated_metrics)
         return df_aggregated_metrics
 
-    def persist(self) -> DataGateway:
+    def persist(self, entrypoint: str, options: dict[str, str]) -> DataGateway:
         _stage_metrics = self._stage_metrics()
         _aggregate_metrics = self._aggregate_metrics()
-        options = {"catalog": self.catalog}
+         
         gtw = (
             DataGateway(
                 stage_metrics=_stage_metrics,
                 agg_metrics=_aggregate_metrics
             )
-                .option("unity_catalog", **options)
+                .option(entrypoint, **options)
         )
         return gtw
 
