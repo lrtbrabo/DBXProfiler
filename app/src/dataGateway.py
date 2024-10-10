@@ -5,9 +5,23 @@ class DataSaver(ABC):
     """
     Abstract interface for the savers used by the DataGateway
     """
+
     @abstractmethod
     def save(self, stage_metrics: DataFrame, agg_metrics: DataFrame, **kwargs):
         pass
+
+    def _check_for_options(self, expected_options: list[str], allowed_options: list[str], **kwargs):
+        """
+        In the future, this implementation should be changed to accept multiple "expected_options", 
+        for now, we will put only the initial one. We should accept the expected_options just as as
+        1 position array in order to not impact future calls and guaratee backwards-compatibility.
+        """
+        if expected_options[0] not in kwargs.keys():
+            raise ValueError(f"Missing '{expected_options}' option")
+        for option, _ in kwargs.items():
+            if option not in allowed_options:
+                raise ValueError(f"Option {option} does not exists")
+        return kwargs
 
 class UnityCatalog(DataSaver):
     """
@@ -15,26 +29,31 @@ class UnityCatalog(DataSaver):
         - catalog
     """
     def save(self, stage_metrics: DataFrame, agg_metrics: DataFrame, **kwargs):
-        options = self._check_for_options(**kwargs)
+        expected_options = ["catalog"]
+        allowed_options = ["catalog"]
+        options = self._check_for_options(
+            expected_options=expected_options,
+            allowed_options=allowed_options,
+            **kwargs
+        )
         catalog = options.get("catalog")
         print(f"Saving to Unity Catalog: {catalog}")
 
-    def _check_for_options(self, **kwargs):
-        allowed_options = ["catalog"]
-        for option, _ in kwargs.items():
-            if option not in allowed_options:
-                raise ValueError(f"Option {option} does not exists")
-        return kwargs 
-
-
-class TempSave:
-     """
+class TempSave(DataSaver):
+    """
     Allowed options:
         - path
     """
     def save(self, stage_metrics: DataFrame, agg_metrics: DataFrame, **kwargs):
-        path = kwargs.get('path')
-        print(f"Saving to temprary location: {path}")
+        expected_options = ["path"]
+        allowed_options = ["path"]
+        options = self._check_for_options(
+            expected_options=expected_options,
+            allowed_options=allowed_options,
+            **kwargs
+        )
+        path = options.get("path")
+        print(f"Saving to temp location: {path}")
 
 class DataGateway:
     def __init__(self, stage_metrics: DataFrame, agg_metrics: DataFrame):
