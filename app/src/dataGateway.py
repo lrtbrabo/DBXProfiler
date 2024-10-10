@@ -1,26 +1,40 @@
 from abc import ABC, abstractmethod
 from pyspark.sql import DataFrame
 
-"""
-This part of the code is critical, 
-this cannot cause a fail in the running jobs no errors should be thrown here
-"""
-
 class DataSaver(ABC):
+    """
+    Abstract interface for the savers used by the DataGateway
+    """
     @abstractmethod
     def save(self, stage_metrics: DataFrame, agg_metrics: DataFrame, **kwargs):
         pass
 
 class UnityCatalog(DataSaver):
+    """
+    Allowed options:
+        - catalog
+    """
     def save(self, stage_metrics: DataFrame, agg_metrics: DataFrame, **kwargs):
-        catalog = kwargs.get("catalog")
+        options = self._check_for_options(**kwargs)
+        catalog = options.get("catalog")
         print(f"Saving to Unity Catalog: {catalog}")
 
+    def _check_for_options(self, **kwargs):
+        allowed_options = ["catalog"]
+        for option, _ in kwargs.items():
+            if option not in allowed_options:
+                raise ValueError(f"Option {option} does not exists")
+        return kwargs 
+
+
 class TempSave:
+     """
+    Allowed options:
+        - path
+    """
     def save(self, stage_metrics: DataFrame, agg_metrics: DataFrame, **kwargs):
         path = kwargs.get('path')
         print(f"Saving to temprary location: {path}")
-        
 
 class DataGateway:
     def __init__(self, stage_metrics: DataFrame, agg_metrics: DataFrame):
@@ -32,13 +46,6 @@ class DataGateway:
         }
 
     def option(self, entry: str, **kwargs):
-        """
-        Allowed options:
-            - unity_catalog:
-                - catalog
-            - temp
-                - path
-        """
         saver = self.savers.get(entry)
         if saver:
             return saver.save(self.stage_metrics, self.agg_metrics, **kwargs)
