@@ -17,6 +17,10 @@ class DBXMetrics(StageMetrics):
         self.application_name = application_name
         self.execution_id = str(uuid.uuid4())
 
+    @property
+    def write(self):
+        return DBXMetricsWriter(self)
+
     def start_metrics(self):
         self.begin()
 
@@ -49,13 +53,6 @@ class DBXMetrics(StageMetrics):
         return df_aggregated_metrics
 
     def persist(self, entrypoint: str, options: dict[str, str]) -> DataGateway:
-        """
-        Allowed options:
-            - unity_catalog:
-                - catalog
-            - temp
-                - path
-        """
         _stage_metrics = self._stage_metrics()
         _aggregate_metrics = self._aggregate_metrics()
          
@@ -69,3 +66,14 @@ class DBXMetrics(StageMetrics):
         return gtw
 
 
+class DBXMetricsWriter:
+    def __init__(self, dbx_metrics: DBXMetrics):
+        self._dbx_metrics = dbx_metrics
+        self._options = {}
+
+    def options(self, options: dict[str, str]):
+        self._options.update(options)
+        return self
+
+    def persist(self, entrypoint: str):
+        return self._dbx_metrics.persist(entrypoint, self._options)
