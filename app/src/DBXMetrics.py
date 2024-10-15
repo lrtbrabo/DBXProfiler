@@ -21,6 +21,11 @@ class DBXMetrics(StageMetrics):
     @property
     def write(self):
         return DBXMetricsWriter(self)
+   
+    def _get_runtime(self):
+        databricks_runtime = self.spark.conf.get("spark.databricks.clusterUsageTags.sparkVersion")
+        cluster_id = self.spark.conf.get("spark.databricks.clusterUsageTags.clusterId")
+        return databricks_runtime, cluster_id
 
     def start_metrics(self):
         self.begin()
@@ -28,21 +33,39 @@ class DBXMetrics(StageMetrics):
     def stop_metrics(self):
         self.end()
 
-    def _add_metadata(self, dataframe: DataFrame) -> DataFrame:
+    def _add_metadata(self, dataframe: DataFrame, is_legacy: bool = False) -> DataFrame:
         """
-        Using the method withColumn instead of with Columns
-        for backwards compatibility with previous spark versions
+        Need to implement is this method a way to verify runtime versions to 
+        check if it needs to run legacy or not
         """
         notebook_path = self.w.dbutils.notebook.entry_point.getDbutils().notebook().getContext().notebookPath().get()
-        notebook_name = notebook_path.split('/')[-1] 
-        dataframe = dataframe.withColumn("__execution_timestamp", current_timestamp())
-        dataframe = dataframe.withColumn("__execution_date", current_date())
-        dataframe = dataframe.withColumn("__application_entrypoint_path", lit(notebook_path))
-        dataframe = dataframe.withColumn("__application_entrypoint_file", lit(notebook_name)) 
-        dataframe = dataframe.withColumn("__application_name", lit(self.application_name))
-        dataframe = dataframe.withColumn("__execution_id", lit(self.execution_id))
-        return dataframe
-
+        notebook_name = notebook_path.split('/')[-1]
+        databricks_runtime, cluster_id = self._get_runtime()         
+        if is_legacy:
+            dataframe = dataframe.withColumn("__execution_timestamp", current_timestamp())
+            dataframe = dataframe.withColumn("__execution_date", current_date())
+            dataframe = dataframe.withColumn("__application_entrypoint_path", lit(notebook_path))
+            dataframe = dataframe.withColumn("__application_entrypoint_file", lit(notebook_name)) 
+            dataframe = dataframe.withColumn("__application_name", lit(self.application_name))
+            dataframe = dataframe.withColumn("__execution_id", lit(self.execution_id))
+            dataframe = dataframe.withColumn("__runtime_version", lit(databricks_runtime))
+            dataframe = dataframe.withColumn("__cluster_id", lit(cluster_id))
+            return dataframe
+        else:
+            dataframe = dataframe.withColumns(
+                {
+                    "__execution_timestamp": current_timestamp(),
+                    "__execution_date": current_date(),
+                    "__application_entrypoint_path": lit(notebook_path),
+                    "__application_entrypoint_file": lit(notebook_name),
+                    "__application_name": lit(self.application_name),
+                    "__execution_id": lit(self.execution_id),
+                    "__runtime_version": lit(databricks_runtime),
+                    "__cluster_id": lit(cluster_id)            
+                }
+            )
+            return dataframe
+            
     def _stage_metrics(self):
         df_stage_metrics = self.create_stagemetrics_DF("PerfStageMetrics")
         df_stage_metrics = self._add_metadata(df_stage_metrics)
