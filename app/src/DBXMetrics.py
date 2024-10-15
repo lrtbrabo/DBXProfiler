@@ -12,7 +12,8 @@ from Spark Connect as it depends on the JVM
 
 class DBXMetrics(StageMetrics):
     def __init__(self, application_name: str):
-        super().__init__(get_spark())
+        self.spark = get_spark()
+        super().__init__(self.spark)
         self.w = get_workspace()
         self.application_name = application_name
         self.execution_id = str(uuid.uuid4())

@@ -19,7 +19,7 @@ def get_spark() -> SparkSession:
         profile, cluster = get_profile()
     
         if profile and cluster:
-            logger.info(f"Using profile: {profile} and cluster_id: {cluster}")
+            logger.info(f"Using profile for spark runtime: {profile} and cluster_id: {cluster}")
             return DatabricksSession.builder.profile(profile).clusterId(cluster).getOrCreate()
         else:
             try:
@@ -39,7 +39,7 @@ def get_workspace() -> WorkspaceClient:
         profile, _ = get_profile()
     
         if profile:
-            logger.info(f"Using profile: {profile}")
+            logger.info(f"Using profile for workspace: {profile}")
             return WorkspaceClient(profile = profile)
         else:
             return WorkspaceClient()

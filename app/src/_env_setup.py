@@ -6,8 +6,10 @@ from databricks.sdk.service.compute import MavenLibrary, Library, PythonPyPiLibr
 
 logger = get_logger()
 
-#Keeping this as two segreggated functions to avoid
-#future refactoring if schema needs to change
+"""
+Keeping this as two segreggated functions to avoid
+future refactoring if schema needs to change
+"""
 def get_maven_coordinate(databricks_runtime: str) -> str:
     with open('./config/versions.json', 'r') as f:
         data = json.load(f)
@@ -22,11 +24,17 @@ def get_pypi_package(databricks_runtime: str) -> str:
 class EnvironmentSetup:
     def __init__(self):
         self.spark = get_spark() 
-        self.databricks_runtime, self.cluster_id, self.maven_coordinate, self.pypi_package = self.define_runtime_variables()
-        self._validate_env()
+        self.databricks_runtime, self.cluster_id = self._get_runtime_variables()
+        self.maven_coordinate = get_maven_coordinate(self.databricks_runtime) if self.databricks_runtime else ""
+        self.pypi_package = get_pypi_package(self.databricks_runtime) if self.databricks_runtime else ""
+        self._validate_env = EnvironmentValidator(
+                databricks_runtime = self.databricks_runtime,
+            ) 
         self._install_dependencies()
+        self._create_unity_dependencies()
 
-    def define_runtime_variables(self):
+    
+    def _get_runtime_variables(self):
         databricks_runtime = self.spark.conf.get("spark.databricks.clusterUsageTags.sparkVersion")
         cluster_id = self.spark.conf.get("spark.databricks.clusterUsageTags.clusterId")
         
@@ -34,19 +42,7 @@ class EnvironmentSetup:
             databricks_runtime = ""
             cluster_id = ""
 
-        maven_coordinate = get_maven_coordinate(databricks_runtime) if databricks_runtime else ""
-        pypi_package = get_pypi_package(databricks_runtime) if databricks_runtime else ""
-        return databricks_runtime, cluster_id, maven_coordinate, pypi_package
-
-
-    def _validate_env(self):
-        try:    
-            EnvironmentValidator(
-                databricks_runtime = self.databricks_runtime,
-            )
-        except ValueError as e:
-            logger.error(e)
-
+        return databricks_runtime, cluster_id
 
     def _install_dependencies(self):
         maven_lib = Library(
@@ -66,5 +62,30 @@ class EnvironmentSetup:
             logger.error(f"""Could not install the following dependencies: {self.maven_coordinate} and {self.pypi_package} 
             This is due to the following exception: {e}""")
 
-
+    def _create_unity_dependencies(self):
+        catalog_name = "__runtime_statistics"
+        schema_name = "metrics"
+        try:
+            self.spark.sql(f"CREATE CATALOG IF NOT EXISTS {catalog_name}")  
+            self.spark.sql(f"CREATE SCHEMA IF NOT EXISTS {catalog_name}.{schema_name}")  
+        except Exception as e:
+            logger.error("""Not able to create unity catalog structure, 
+            please review you access. You should be able to create catalogs.""")
+            raise e 
+            
 run = EnvironmentSetup()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from pyspark.sql import DataFrame
+from pyspark.sql import SparkSession
 
 class DataSaver(ABC):
     """
@@ -28,6 +29,12 @@ class UnityCatalog(DataSaver):
     Allowed options:
         - catalog
     """
+
+    def _get_catalog_and_schema(self):
+        catalog = "__runtime_statistics"
+        schema = "metrics"
+        return catalog, schema
+
     def save(self, stage_metrics: DataFrame, agg_metrics: DataFrame, **kwargs):
         expected_options = ["catalog"]
         allowed_options = ["catalog"]
@@ -36,8 +43,13 @@ class UnityCatalog(DataSaver):
             allowed_options=allowed_options,
             **kwargs
         )
-        catalog = options.get("catalog")
-        print(f"Saving to Unity Catalog: {catalog}")
+        # catalog = options.get("catalog")
+        catalog_name, schema_name = self._get_catalog_and_schema()
+        stage_metrics.write.mode("append").saveAsTable(f"{catalog_name}.{schema_name}.task_metrics")
+        agg_metrics.write.mode("append").saveAsTable(f"{catalog_name}.{schema_name}.task_agg_metrics")
+        print(f"Saving to Unity Catalog")
+
+
 
 class TempSave(DataSaver):
     """
