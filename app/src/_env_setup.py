@@ -31,7 +31,7 @@ class EnvironmentSetup:
                 databricks_runtime = self.databricks_runtime,
             ) 
         self._install_dependencies()
-        self._create_unity_dependencies()
+        # self._create_unity_dependencies()
 
     
     def _get_runtime_variables(self):

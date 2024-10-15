@@ -31,11 +31,11 @@ _stage_metrics, _aggregate_metrics = run_my_workload()
 
 # COMMAND ----------
 
-_stage_metrics.display()
+_stage_metrics.show()
 
 # COMMAND ----------
 
-_aggregate_metrics.display()
+_aggregate_metrics.show()
 
 # COMMAND ----------
 
