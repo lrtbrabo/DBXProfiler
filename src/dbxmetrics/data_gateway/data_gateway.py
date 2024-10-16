@@ -10,7 +10,7 @@ class DataSaver:
         pass
 
     @staticmethod
-    def _check_for_options(self, expected_options: list[str], allowed_options: list[str], **kwargs):
+    def _check_for_options(expected_options: list[str], allowed_options: list[str], **kwargs):
         """
         In the future, this implementation should be changed to accept multiple "expected_options", 
         for now, we will put only the initial one. We should accept the expected_options just as as
@@ -30,7 +30,7 @@ class UnityCatalog(DataSaver):
     """
 
     @staticmethod
-    def _get_catalog_and_schema(self):
+    def _get_catalog_and_schema():
         catalog = "__runtime_statistics"
         schema = "metrics"
         return catalog, schema

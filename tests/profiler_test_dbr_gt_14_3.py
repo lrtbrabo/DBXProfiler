@@ -4,6 +4,9 @@
 
 # COMMAND ----------
 
+# MAGIC %pip install -e /Workspace/Users/lucas.brabo@databricks.com/DBXProfiler
+
+# COMMAND ----------
 
 from src.dbxmetrics.spark_profiler.profiler import DBXMetrics
 
@@ -30,11 +33,11 @@ _stage_metrics, _aggregate_metrics = run_my_workload()
 
 # COMMAND ----------
 
-_stage_metrics.show()
+_stage_metrics.display()
 
 # COMMAND ----------
 
-_aggregate_metrics.show()
+_aggregate_metrics.display()
 
 # COMMAND ----------
 
