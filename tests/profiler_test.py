@@ -4,13 +4,11 @@
 
 # COMMAND ----------
 
-from DBXMetrics import DBXMetrics
-from _spark_runtime import get_spark
+from src.dbxmetrics.spark_profiler.profiler import DBXMetrics
 
 # COMMAND ----------
 
 def run_my_workload():
-    spark = get_spark()
     stagemetrics = DBXMetrics("lucas_test")
 
     stagemetrics.begin()
