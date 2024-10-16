@@ -69,17 +69,13 @@ def _get_allowed_databricks_runtimes():
 
 def _get_profile() -> str | None:
     try:
-        profile = "e2"
-        return profile
-        # return os.environ.get("PROFILE")
+        return os.environ.get("PROFILE")
     except:
         return None
 
 def _get_cluster() -> str | None:
     try:
-        cluster = "0930-174937-ru6ujz61"
-        return cluster
-        # return os.environ.get("CLUSTER")
+        return os.environ.get("CLUSTER")
     except:
         return None
 
