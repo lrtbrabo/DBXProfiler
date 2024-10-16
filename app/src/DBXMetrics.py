@@ -13,6 +13,9 @@ from Spark Connect as it depends on the JVM
 class DBXMetrics(StageMetrics):
     def __init__(self, application_name: str):
         self.spark = get_spark()
+        self.databricks_runtime = self.spark.conf.get("spark.databricks.clusterUsageTags.sparkVersion")
+        self.cluster_id = self.spark.conf.get("spark.databricks.clusterUsageTags.clusterId")
+
         super().__init__(self.spark)
         self.w = get_workspace()
         self.application_name = application_name
@@ -21,11 +24,6 @@ class DBXMetrics(StageMetrics):
     @property
     def write(self):
         return DBXMetricsWriter(self)
-   
-    def _get_runtime(self):
-        databricks_runtime = self.spark.conf.get("spark.databricks.clusterUsageTags.sparkVersion")
-        cluster_id = self.spark.conf.get("spark.databricks.clusterUsageTags.clusterId")
-        return databricks_runtime, cluster_id
 
     def start_metrics(self):
         self.begin()
@@ -40,7 +38,6 @@ class DBXMetrics(StageMetrics):
         """
         notebook_path = self.w.dbutils.notebook.entry_point.getDbutils().notebook().getContext().notebookPath().get()
         notebook_name = notebook_path.split('/')[-1]
-        databricks_runtime, cluster_id = self._get_runtime()         
         if is_legacy:
             dataframe = dataframe.withColumn("__execution_timestamp", current_timestamp())
             dataframe = dataframe.withColumn("__execution_date", current_date())
@@ -48,8 +45,8 @@ class DBXMetrics(StageMetrics):
             dataframe = dataframe.withColumn("__application_entrypoint_file", lit(notebook_name)) 
             dataframe = dataframe.withColumn("__application_name", lit(self.application_name))
             dataframe = dataframe.withColumn("__execution_id", lit(self.execution_id))
-            dataframe = dataframe.withColumn("__runtime_version", lit(databricks_runtime))
-            dataframe = dataframe.withColumn("__cluster_id", lit(cluster_id))
+            dataframe = dataframe.withColumn("__runtime_version", lit(self.databricks_runtime))
+            dataframe = dataframe.withColumn("__cluster_id", lit(self.cluster_id))
             return dataframe
         else:
             dataframe = dataframe.withColumns(
@@ -60,8 +57,8 @@ class DBXMetrics(StageMetrics):
                     "__application_entrypoint_file": lit(notebook_name),
                     "__application_name": lit(self.application_name),
                     "__execution_id": lit(self.execution_id),
-                    "__runtime_version": lit(databricks_runtime),
-                    "__cluster_id": lit(cluster_id)            
+                    "__runtime_version": lit(self.databricks_runtime),
+                    "__cluster_id": lit(self.cluster_id)            
                 }
             )
             return dataframe
