@@ -1,8 +1,10 @@
+from multiprocessing.util import get_logger
+
 from sparkmeasure import StageMetrics
 from pyspark.sql import DataFrame
 from pyspark.sql.functions import current_timestamp, current_date, lit
-from _spark_runtime import get_workspace, get_spark
-from dataGateway import DataGateway
+from src.dbxmetrics.config import WorkspaceConfig, get_workspace, get_spark
+from src.dbxmetrics.data_gateway.data_gateway import DataGateway
 import uuid
 
 """
@@ -10,11 +12,14 @@ This cannot be ran from Spark Connect since Spark Context is not supported
 from Spark Connect as it depends on the JVM
 """
 
+logger = get_logger()
+workspace_config = WorkspaceConfig()
+
 class DBXMetrics(StageMetrics):
     def __init__(self, application_name: str):
         self.spark = get_spark()
-        self.databricks_runtime = self.spark.conf.get("spark.databricks.clusterUsageTags.sparkVersion")
-        self.cluster_id = self.spark.conf.get("spark.databricks.clusterUsageTags.clusterId")
+        self.databricks_runtime = workspace_config.get_databricks_runtime()
+        self.cluster_id = workspace_config.get_cluster()
 
         super().__init__(self.spark)
         self.w = get_workspace()
