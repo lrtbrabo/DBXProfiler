@@ -1,21 +1,20 @@
-from abc import ABC, abstractmethod
 from pyspark.sql import DataFrame
-from pyspark.sql import SparkSession
 
-class DataSaver(ABC):
+
+class DataSaver:
     """
     Abstract interface for the savers used by the DataGateway
     """
 
-    @abstractmethod
     def save(self, stage_metrics: DataFrame, agg_metrics: DataFrame, **kwargs):
         pass
 
+    @staticmethod
     def _check_for_options(self, expected_options: list[str], allowed_options: list[str], **kwargs):
         """
         In the future, this implementation should be changed to accept multiple "expected_options", 
         for now, we will put only the initial one. We should accept the expected_options just as as
-        1 position array in order to not impact future calls and guaratee backwards-compatibility.
+        1 position array in order to not impact future calls and guarantee backwards-compatibility.
         """
         if expected_options[0] not in kwargs.keys():
             raise ValueError(f"Missing '{expected_options}' option")
@@ -30,6 +29,7 @@ class UnityCatalog(DataSaver):
         - catalog
     """
 
+    @staticmethod
     def _get_catalog_and_schema(self):
         catalog = "__runtime_statistics"
         schema = "metrics"
