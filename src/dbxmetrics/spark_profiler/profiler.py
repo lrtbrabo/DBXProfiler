@@ -3,8 +3,8 @@ from multiprocessing.util import get_logger
 from sparkmeasure import StageMetrics
 from pyspark.sql import DataFrame
 from pyspark.sql.functions import current_timestamp, current_date, lit
-from src.dbxmetrics.config import WorkspaceConfig, get_workspace, get_spark
-from src.dbxmetrics.data_gateway.data_gateway import DataGateway
+from dbxmetrics.config import WorkspaceConfig, get_workspace, get_spark
+from dbxmetrics.data_gateway.data_gateway import DataGateway
 import uuid
 
 """

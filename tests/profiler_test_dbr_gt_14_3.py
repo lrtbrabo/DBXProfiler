@@ -4,7 +4,7 @@
 
 # COMMAND ----------
 
-# MAGIC %pip install -e /Workspace/Users/lucas.brabo@databricks.com/DBXProfiler
+# MAGIC %pip install git+https://github.com/username/repository.git@project-reorg
 
 # COMMAND ----------
 
