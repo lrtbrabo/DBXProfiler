@@ -1,8 +1,8 @@
 from databricks.sdk.service.compute import MavenLibrary, Library, PythonPyPiLibrary
 from dataclasses import dataclass
 from typing import ClassVar
-from src.dbxmetrics.config import WorkspaceConfig, get_spark, get_workspace
-from src.dbxmetrics._logger import get_logger
+from dbxmetrics.config import WorkspaceConfig, get_spark, get_workspace
+from dbxmetrics._logger import get_logger
 import json
 
 logger = get_logger()

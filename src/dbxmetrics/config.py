@@ -1,7 +1,7 @@
 from pyspark.sql import SparkSession
 from databricks.sdk import WorkspaceClient
 import os
-from src.dbxmetrics._logger import get_logger
+from dbxmetrics._logger import get_logger
 from dataclasses import dataclass, field
 
 """All errors gotten from this validations steps should fail the execution"""
