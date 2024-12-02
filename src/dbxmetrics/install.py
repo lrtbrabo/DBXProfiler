@@ -64,20 +64,3 @@ class EnvironmentSetup:
             logger.error("""Not able to create unity catalog structure, 
             please review you access. You should be able to create catalogs.""")
             raise e
-
-run = EnvironmentSetup()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

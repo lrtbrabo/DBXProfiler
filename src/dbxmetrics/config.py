@@ -106,7 +106,7 @@ class WorkspaceConfig:
     def get_cluster(self) -> str:
         if self.cluster_id:
             return self.cluster_id
-        return ""
+        return get_spark().conf.get("spark.databricks.clusterUsageTags.clusterId")
 
     def get_maven_coordinate(self):
         maven_coord = self.allowed_databricks_runtimes[self.databricks_runtime]["maven_coordinate"]
