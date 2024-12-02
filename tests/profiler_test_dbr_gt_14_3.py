@@ -9,6 +9,14 @@
 # COMMAND ----------
 
 from dbxmetrics.spark_profiler.profiler import DBXMetrics
+from dbxmetrics.install import EnvironmentSetup
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC
+# MAGIC create catalog if not exists __runtime_statistics;
+# MAGIC create schema if not exists __runtime_statistics.metrics;
 
 # COMMAND ----------
 
@@ -26,14 +34,6 @@ def run_my_workload():
         .persist("unity_catalog") 
     )
     return stagemetrics._stage_metrics(), stagemetrics._aggregate_metrics()
-
-# COMMAND ----------
-
-# MAGIC %sql
-# MAGIC
-# MAGIC
-# MAGIC create catalog if not exists __runtime_statistics;
-# MAGIC create schema if not exists __runtime_statistics.metrics;
 
 # COMMAND ----------
 
