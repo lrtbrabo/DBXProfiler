@@ -4,11 +4,11 @@
 
 # COMMAND ----------
 
-# MAGIC %pip install git+https://github.com/username/repository.git@project-reorg
+# MAGIC %pip install --quiet git+https://github.com/lrtbrabo/DBXProfiler.git@project-reorg
 
 # COMMAND ----------
 
-from src.dbxmetrics.spark_profiler.profiler import DBXMetrics
+from dbxmetrics.spark_profiler.profiler import DBXMetrics
 
 # COMMAND ----------
 
@@ -22,10 +22,18 @@ def run_my_workload():
     (
         stagemetrics
         .write
-        .options({"catalog": "temp_lucas"})
+        .options({"catalog": "lucas_brabo"})
         .persist("unity_catalog") 
     )
     return stagemetrics._stage_metrics(), stagemetrics._aggregate_metrics()
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC
+# MAGIC
+# MAGIC create catalog if not exists __runtime_statistics;
+# MAGIC create schema if not exists __runtime_statistics.metrics;
 
 # COMMAND ----------
 
@@ -38,7 +46,3 @@ _stage_metrics.display()
 # COMMAND ----------
 
 _aggregate_metrics.display()
-
-# COMMAND ----------
-
-
