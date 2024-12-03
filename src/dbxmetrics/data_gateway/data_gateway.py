@@ -13,11 +13,13 @@ class DataSaver:
     def _check_for_options(expected_options: list[str], allowed_options: list[str], **kwargs):
         """
         In the future, this implementation should be changed to accept multiple "expected_options", 
-        for now, we will put only the initial one. We should accept the expected_options just as as
+        for now, we will put only the initial one. We should accept the expected_options just as
         1 position array in order to not impact future calls and guarantee backwards-compatibility.
         """
-        if expected_options[0] not in kwargs.keys():
-            raise ValueError(f"Missing '{expected_options}' option")
+        if not all(option in kwargs.keys() for option in expected_options):
+            missing_options = [option for option in expected_options if option not in kwargs]
+            raise ValueError(f"Missing option(s): {', '.join(missing_options)}")
+
         for option, _ in kwargs.items():
             if option not in allowed_options:
                 raise ValueError(f"Option {option} does not exists")
@@ -36,15 +38,18 @@ class UnityCatalog(DataSaver):
         return catalog, schema
 
     def save(self, stage_metrics: DataFrame, agg_metrics: DataFrame, **kwargs):
-        expected_options = ["catalog"]
+        expected_options = []
         allowed_options = ["catalog"]
         options = self._check_for_options(
             expected_options=expected_options,
             allowed_options=allowed_options,
             **kwargs
         )
-        # catalog = options.get("catalog")
-        catalog_name, schema_name = self._get_catalog_and_schema()
+        if options.get("catalog"):
+            catalog_name = options.get("catalog")
+            _, schema_name = self._get_catalog_and_schema()
+        else:
+            catalog_name, schema_name = self._get_catalog_and_schema()
         stage_metrics.write.mode("append").saveAsTable(f"{catalog_name}.{schema_name}.task_metrics")
         agg_metrics.write.mode("append").saveAsTable(f"{catalog_name}.{schema_name}.task_agg_metrics")
         print(f"Saving to Unity Catalog")
@@ -66,6 +71,7 @@ class TempSave(DataSaver):
         )
         path = options.get("path")
         print(f"Saving to temp location: {path}")
+
 
 class DataGateway:
     def __init__(self, stage_metrics: DataFrame, agg_metrics: DataFrame):

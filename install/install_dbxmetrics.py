@@ -4,7 +4,7 @@
 
 # COMMAND ----------
 
-# MAGIC %pip install --quiet git+https://github.com/lrtbrabo/DBXProfiler.git@project-reorg
+# MAGIC %pip install --quiet git+https://github.com/lrtbrabo/DBXProfiler.git@dev
 
 # COMMAND ----------
 
@@ -21,7 +21,7 @@ from dbxmetrics.install import EnvironmentSetup
 # COMMAND ----------
 
 def run_my_workload():
-    stagemetrics = DBXMetrics("lucas_test")
+    stagemetrics = DBXMetrics("dbxmetrics_install_application")
 
     stagemetrics.begin()
     spark.sql("select count(*) from range(1000) cross join range(1000) cross join range(1000)").show()
@@ -30,8 +30,8 @@ def run_my_workload():
     (
         stagemetrics
         .write
-        .options({"catalog": "lucas_brabo"})
-        .persist("unity_catalog")
+        # .options({"catalog": "lucas_brabo"}) # You can pass this option to write to in another catalog, note that the schema "metrics" should be created inside of it
+        .persist("unity_catalog") 
     )
     return stagemetrics._stage_metrics(), stagemetrics._aggregate_metrics()
 

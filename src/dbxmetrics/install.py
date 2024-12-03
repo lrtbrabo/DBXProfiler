@@ -10,7 +10,7 @@ workspace_config = WorkspaceConfig()
 
 @dataclass
 class EnvironmentValidator:
-    databricks_runtime: str | None = workspace_config.get_databricks_runtime()
+    databricks_runtime: str = workspace_config.get_databricks_runtime()
     allowed_databricks_runtimes: ClassVar[list[str]] = workspace_config.allowed_databricks_runtimes
 
     def __post_init__(self):

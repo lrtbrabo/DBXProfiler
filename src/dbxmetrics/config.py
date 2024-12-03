@@ -61,6 +61,10 @@ def get_workspace() -> WorkspaceClient:
 
 def _get_allowed_databricks_runtimes():
     return {
+        "12.2.x-scala2.12": {
+            "maven_coordinate": "ch.cern.sparkmeasure:spark-measure_2.12:0.24",
+            "pypi_package": "sparkmeasure==0.24.0"
+        },
         "13.3.x-scala2.12": {
             "maven_coordinate": "ch.cern.sparkmeasure:spark-measure_2.12:0.24",
             "pypi_package": "sparkmeasure==0.24.0"
@@ -71,13 +75,13 @@ def _get_allowed_databricks_runtimes():
         }
     }
 
-def _get_profile() -> str | None:
+def _get_profile():
     try:
         return os.environ.get("PROFILE")
     except:
         return None
 
-def _get_cluster() -> str | None:
+def _get_cluster():
     try:
         return os.environ.get("CLUSTER")
     except:
@@ -94,10 +98,12 @@ def _get_cluster_id():
 
 @dataclass
 class WorkspaceConfig:
-    databricks_runtime: str | None = field(default_factory=_get_databricks_runtime)
+    # databricks_runtime: str | None = field(default_factory=_get_databricks_runtime)
+    # allowed_databricks_runtimes: dict[str] = field(default_factory = _get_allowed_databricks_runtimes)
+    # cluster_id: str | None = field(default_factory=_get_cluster)
+    databricks_runtime: str = field(default_factory=_get_databricks_runtime)
     allowed_databricks_runtimes: dict[str] = field(default_factory = _get_allowed_databricks_runtimes)
-    cluster_id: str | None = field(default_factory=_get_cluster)
-
+    cluster_id: str = field(default_factory=_get_cluster)
     def get_databricks_runtime(self) -> str:
         if self.databricks_runtime:
             return self.databricks_runtime
