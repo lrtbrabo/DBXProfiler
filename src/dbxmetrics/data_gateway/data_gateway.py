@@ -16,8 +16,6 @@ class DataSaver:
         for now, we will put only the initial one. We should accept the expected_options just as
         1 position array in order to not impact future calls and guarantee backwards-compatibility.
         """
-        # if expected_options[0] not in kwargs.keys():
-        #     raise ValueError(f"Missing '{expected_options}' option")
         if not all(option in kwargs.keys() for option in expected_options):
             missing_options = [option for option in expected_options if option not in kwargs]
             raise ValueError(f"Missing option(s): {', '.join(missing_options)}")
