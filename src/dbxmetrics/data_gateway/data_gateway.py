@@ -43,8 +43,11 @@ class UnityCatalog(DataSaver):
             allowed_options=allowed_options,
             **kwargs
         )
-        # catalog = options.get("catalog")
-        catalog_name, schema_name = self._get_catalog_and_schema()
+        if options.get("catalog"):
+            catalog_name = options.get("catalog")
+            _, schema_name = self._get_catalog_and_schema()
+        else:
+            catalog_name, schema_name = self._get_catalog_and_schema()
         stage_metrics.write.mode("append").saveAsTable(f"{catalog_name}.{schema_name}.task_metrics")
         agg_metrics.write.mode("append").saveAsTable(f"{catalog_name}.{schema_name}.task_agg_metrics")
         print(f"Saving to Unity Catalog")
@@ -66,6 +69,7 @@ class TempSave(DataSaver):
         )
         path = options.get("path")
         print(f"Saving to temp location: {path}")
+
 
 class DataGateway:
     def __init__(self, stage_metrics: DataFrame, agg_metrics: DataFrame):
