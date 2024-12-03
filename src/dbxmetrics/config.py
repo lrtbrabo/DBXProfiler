@@ -71,13 +71,13 @@ def _get_allowed_databricks_runtimes():
         }
     }
 
-def _get_profile() -> str | None:
+def _get_profile():
     try:
         return os.environ.get("PROFILE")
     except:
         return None
 
-def _get_cluster() -> str | None:
+def _get_cluster():
     try:
         return os.environ.get("CLUSTER")
     except:
