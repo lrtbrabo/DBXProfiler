@@ -8,6 +8,7 @@ setup(name='dbxmetrics',
     package_dir={'': 'src'},
     install_requires=[
         "databricks-connect",
-        "databricks-sdk==0.34.0"
+        "databricks-sdk==0.34.0",
+        "sparkmeasure==0.24.0"
     ],
 )
