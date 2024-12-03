@@ -6,5 +6,8 @@ setup(name='dbxmetrics',
     author_email='lucas.brabo@databricks.com',
     packages=find_packages(where='src'),
     package_dir={'': 'src'},
-    install_requires=[],
+    install_requires=[
+        "databricks-connect==15.4.2",
+        "databricks-sdk==0.34.0"
+    ],
 )
