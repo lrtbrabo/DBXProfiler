@@ -13,11 +13,15 @@ class DataSaver:
     def _check_for_options(expected_options: list[str], allowed_options: list[str], **kwargs):
         """
         In the future, this implementation should be changed to accept multiple "expected_options", 
-        for now, we will put only the initial one. We should accept the expected_options just as as
+        for now, we will put only the initial one. We should accept the expected_options just as
         1 position array in order to not impact future calls and guarantee backwards-compatibility.
         """
-        if expected_options[0] not in kwargs.keys():
-            raise ValueError(f"Missing '{expected_options}' option")
+        # if expected_options[0] not in kwargs.keys():
+        #     raise ValueError(f"Missing '{expected_options}' option")
+        if not all(option in kwargs.keys() for option in expected_options):
+            missing_options = [option for option in expected_options if option not in kwargs]
+            raise ValueError(f"Missing option(s): {', '.join(missing_options)}")
+
         for option, _ in kwargs.items():
             if option not in allowed_options:
                 raise ValueError(f"Option {option} does not exists")
