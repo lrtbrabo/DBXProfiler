@@ -97,9 +97,9 @@ class WorkspaceConfig:
     # databricks_runtime: str | None = field(default_factory=_get_databricks_runtime)
     # allowed_databricks_runtimes: dict[str] = field(default_factory = _get_allowed_databricks_runtimes)
     # cluster_id: str | None = field(default_factory=_get_cluster)
-    databricks_runtime: field(default_factory=_get_databricks_runtime)
-    allowed_databricks_runtimes: field(default_factory = _get_allowed_databricks_runtimes)
-    cluster_id: field(default_factory=_get_cluster)
+    databricks_runtime: str = field(default_factory=_get_databricks_runtime)
+    allowed_databricks_runtimes: dict[str] = field(default_factory = _get_allowed_databricks_runtimes)
+    cluster_id: str = field(default_factory=_get_cluster)
     def get_databricks_runtime(self) -> str:
         if self.databricks_runtime:
             return self.databricks_runtime
