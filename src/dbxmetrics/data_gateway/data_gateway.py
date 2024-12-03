@@ -36,7 +36,7 @@ class UnityCatalog(DataSaver):
         return catalog, schema
 
     def save(self, stage_metrics: DataFrame, agg_metrics: DataFrame, **kwargs):
-        expected_options = ["catalog"]
+        expected_options = []
         allowed_options = ["catalog"]
         options = self._check_for_options(
             expected_options=expected_options,

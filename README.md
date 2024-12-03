@@ -1,5 +1,4 @@
 # DBXMetrics
-***
 
 ### DBXMetrics is an extension of the project [SparkMeasure](https://github.com/LucaCanali/sparkMeasure/tree/master) by Luca Canali
 
