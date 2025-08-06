@@ -1,10 +1,10 @@
 # Databricks notebook source
-# MAGIC %pip install --quiet databricks-sdk==0.9.0
+# MAGIC %pip install --quiet databricks-sdk==0.62.0
 # MAGIC dbutils.library.restartPython()
 
 # COMMAND ----------
 
-# MAGIC %pip install --quiet git+https://github.com/lrtbrabo/DBXProfiler.git@dev
+# MAGIC %pip install --quiet git+https://github.com/lrtbrabo/DBXProfiler.git@main
 
 # COMMAND ----------
 

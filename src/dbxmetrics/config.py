@@ -72,6 +72,10 @@ def _get_allowed_databricks_runtimes():
         "14.3.x-scala2.12": {
             "maven_coordinate": "ch.cern.sparkmeasure:spark-measure_2.12:0.24",
             "pypi_package": "sparkmeasure==0.24.0"
+        },
+        "15.4.x-scala2.12": {
+            "maven_coordinate": "ch.cern.sparkmeasure:spark-measure_2.12:0.25",
+            "pypi_package": "sparkmeasure==0.25.0"
         }
     }
 
